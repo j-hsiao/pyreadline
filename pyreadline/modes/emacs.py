@@ -274,7 +274,10 @@ class EmacsMode(DigitArgumentMode, IncrementalSearchPromptMode,
             if lineobj.EndOfLine(self.l_buffer) == 0:
                 raise EOFError
         if keyinfo.keyname or keyinfo.control or keyinfo.meta:
-            default = nop
+            if keyinfo.keyname == 'tab':
+                default = self.complete
+            else:
+                default = nop
         else:
             default = self.self_insert
         dispatch_func = self.key_dispatch.get(keytuple, default)

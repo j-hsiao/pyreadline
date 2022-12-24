@@ -198,6 +198,11 @@ class TextLine(object):
         self.prev_start_segment = wordmatcher.prev_start_segment
         self.prev_end_segment = wordmatcher.prev_end_segment
         
+    def __mul__(self, mult):
+        return TextLine(
+            self.get_line_text() * mult,
+            self.point, self.mark)
+
     def push_undo(self):
         ltext = self.get_line_text()
         if self.undo_stack and ltext == self.undo_stack[-1].get_line_text():

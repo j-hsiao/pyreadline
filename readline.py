@@ -27,8 +27,11 @@ __all__ = [ 'parse_and_bind',
             'add_history',
             'callback_handler_install',
             'callback_handler_remove',
-            'callback_read_char',] #Some other objects are added below
+            'callback_read_char',
+            'redisplay'] #Some other objects are added below
 
+def redisplay():
+    pass
 
 # create a Readline object to contain the state
 rl = Readline()
@@ -76,5 +79,6 @@ else:
     callback_read_char=rl.callback_read_char
 
     console.install_readline(rl.readline)
+
 
 __all__.append("rl")

@@ -42,6 +42,7 @@ class BaseMode(object):
         self.pre_input_hook = None
         self.first_prompt = True
         self.cursor_size=25
+        self.__doing_complete = False
         
         self.prompt = ">>> "
         
@@ -197,7 +198,9 @@ class BaseMode(object):
             i = 0
             while 1:
                 try:
+                    self.__doing_complete = True
                     r = self.completer(ensure_unicode(text), i)
+                    self.__doing_complete = False
                 except IndexError:
                     break
                 i += 1
@@ -268,6 +271,14 @@ class BaseMode(object):
                 else:
                     self._bell()
         else:
+            if sys.version_info.major < 3:
+                # python3 rlcompleter.Completer.complete()
+                # will automatically insert a tab if no completions
+                # but python2 will not
+                try:
+                    self.tab_insert(None)
+                except AttributeError:
+                    pass
             self._bell()
         self.finalize()
 
@@ -309,6 +320,12 @@ class BaseMode(object):
 
     def insert_text(self, string):
         """Insert text into the command line."""
+        if self.__doing_complete and string == '\t':
+            try:
+                self.tab_insert(None)
+                return
+            except Exception:
+                pass
         self.l_buffer.insert_text(string, self.argument_reset)
         self.finalize()
 
