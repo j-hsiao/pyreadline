@@ -81,9 +81,13 @@ class LineHistory(object):
         try:
             for line in open(filename, 'r'):
                 self.add_history(lineobj.ReadLineTextBuffer(ensure_unicode(line.rstrip())))
-        except IOError:
-            self.history = []
-            self.history_cursor = 0
+        except (IOError, ValueError):
+            try:
+                for line in open(filename, 'r', encoding='utf-8'):
+                    self.add_history(lineobj.ReadLineTextBuffer(ensure_unicode(line.rstrip())))
+            except (IOError, ValueError):
+                self.history = []
+                self.history_cursor = 0
 
     def write_history_file(self, filename = None): 
         '''Save a readline history file.'''
